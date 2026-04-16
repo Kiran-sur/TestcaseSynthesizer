@@ -1,6 +1,9 @@
 # data_synthesizer.py
 import json
+import logging
 from llm_client import llm_client
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 def generate_test_data(data_schema: str, count: int, context: str = "") -> list | None:
     """
@@ -26,24 +29,22 @@ def generate_test_data(data_schema: str, count: int, context: str = "") -> list 
     Ensure the output is a single, valid JSON array containing the {count} objects. Do not include any explanatory text or markdown formatting.
     """
 
-    print(f"\n--- Generating {count} data items... ---")
+    logging.info(f"Generating {count} data items...")
     response_text = llm_client.generate(prompt)
 
     if not response_text:
-        print("Failed to get a response from the LLM.")
+        logging.error("Failed to get a response from the LLM.")
         return None
 
     try:
         # The response should be a clean JSON string because of our model config
         data = json.loads(response_text)
         if isinstance(data, list) and len(data) == count:
-            print(f"Successfully generated and parsed {len(data)} data items.")
+            logging.info(f"Successfully generated and parsed {len(data)} data items.")
             return data
         else:
-            print(f"Generated data is not in the expected format. Expected a list of {count} items.")
+            logging.warning(f"Generated data is not in the expected format. Expected a list of {count} items.")
             return None
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON from LLM response: {e}")
-        print(f"Raw response was:\n{response_text}")
+        logging.error(f"Error decoding JSON from LLM response: {e}\nRaw response was:\n{response_text}")
         return None
-

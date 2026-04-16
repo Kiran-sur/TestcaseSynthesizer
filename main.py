@@ -1,18 +1,21 @@
 # main.py
 import argparse
 import json
+import logging
 
 from data_synthesizer import generate_test_data
 from testCase_synthesizer import generate_test_scenarios
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 def save_to_file(filename: str, data: dict | list):
     """Saves data to a JSON file."""
     try:
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        print(f"Successfully saved output to {filename}")
+        logging.info(f"Successfully saved output to {filename}")
     except IOError as e:
-        print(f"Error saving file: {e}")
+        logging.error(f"Error saving file: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="GenAI Test Data & Scenario Synthesizer")

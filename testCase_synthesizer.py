@@ -1,7 +1,9 @@
-# scenario_synthesizer.py
 # testCase_synthesizer.py
 import json
+import logging
 from llm_client import llm_client
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 def generate_test_scenarios(feature_description: str, scenario_types: list[str]) -> dict | None:
     """
@@ -37,18 +39,17 @@ def generate_test_scenarios(feature_description: str, scenario_types: list[str])
     Do not include any explanatory text or markdown formatting outside of the JSON structure.
     """
 
-    print(f"\n--- Generating scenarios for '{feature_description}'... ---")
+    logging.info(f"Generating scenarios for '{feature_description}'...")
     response_text = llm_client.generate(prompt)
 
     if not response_text:
-        print("Failed to get a response from the LLM.")
+        logging.error("Failed to get a response from the LLM.")
         return None
 
     try:
         scenarios = json.loads(response_text)
-        print("Successfully generated and parsed scenarios.")
+        logging.info("Successfully generated and parsed scenarios.")
         return scenarios
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON from LLM response: {e}")
-        print(f"Raw response was:\n{response_text}")
+        logging.error(f"Error decoding JSON from LLM response: {e}\nRaw response was:\n{response_text}")
         return None

@@ -1,10 +1,13 @@
 # llm_client.py
 import os
+import logging
 import google.generativeai as genai
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 class LLMClient:
     """A client for interacting with the Google Gemini Pro model."""
@@ -30,7 +33,7 @@ class LLMClient:
             model_name="gemini-pro",
             generation_config=generation_config
         )
-        print("LLM Client initialized successfully.")
+        logging.info("LLM Client initialized successfully.")
 
     def generate(self, prompt: str) -> str:
         """
@@ -46,7 +49,7 @@ class LLMClient:
             response = self.model.generate_content(prompt)
             return response.text
         except Exception as e:
-            print(f"An error occurred during LLM generation: {e}")
+            logging.error(f"An error occurred during LLM generation: {e}")
             return "" # Return empty string on failure
 
 # Singleton instance to be used across the application
